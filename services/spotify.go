@@ -13,19 +13,30 @@ import (
 var SpotifyClient *spotify.Client
 
 func InitSpotify() {
-	_ = godotenv.Load()
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("Error loading .env file: %v", err)
+	}
+
+	clientID := os.Getenv("SPOTIFY_ID")
+	clientSecret := os.Getenv("SPOTIFY_SECRET")
+	if clientID == "" || clientSecret == "" {
+		log.Fatalf("Missing SPOTIFY_ID or SPOTIFY_SECRET in environment")
+	}
 
 	config := &clientcredentials.Config{
-		ClientID:     os.Getenv("SPOTIFY_ID"),
-		ClientSecret: os.Getenv("SPOTIFY_SECRET"),
+		ClientID:     clientID,
+		ClientSecret: clientSecret,
 		TokenURL:     "https://accounts.spotify.com/api/token",
 	}
 
-	_, err := config.Token(context.Background())
+	_, err = config.Token(context.Background())
 	if err != nil {
 		log.Fatalf("Spotify token error: %v", err)
 	}
 
 	httpClient := config.Client(context.Background())
 	SpotifyClient = spotify.New(httpClient)
+
+	log.Println("✅ Spotify client initialized successfully")
 }
