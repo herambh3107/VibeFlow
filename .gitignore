@@ -1,1 +1,10 @@
+# Ignore .env file
 .env
+
+# Ignore node_modules (for Node.js projects)
+node_modules/
+
+# Ignore Go binary files
+*.exe
+*.out
+*.bin
